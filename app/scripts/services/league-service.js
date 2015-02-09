@@ -13,11 +13,15 @@ var LeagueService = function () {
     var teams = [];
     var games = [];
 
+    /**
+     * All the league data (updated all the time)
+     * @type {Array}
+     */
     this.league = [];
 
     /**
      * Fire it
-     * @param callback
+     * @param {requestCallback} The callback that is called whenever the service has new data
      */
     this.init = function (callback) {
         TeamsService.getTeams().then(function (teamsArray) {
@@ -30,6 +34,7 @@ var LeagueService = function () {
 
     /**
      * Creates the league object
+     * @private
      * @type {function(this:LeagueService)|*}
      */
     var initLeagueObject = function () {
@@ -53,6 +58,7 @@ var LeagueService = function () {
 
     /**
      * Updates the league object
+     * @private
      * @type {function(this:LeagueService)|*}
      * @param {Object[]} example [0:{"date":"13/05/12","homeTeamId":19,"awayTeamId":7,"homeGoals":"3","awayGoals":"1"}...]
      */
@@ -117,6 +123,7 @@ var LeagueService = function () {
 
     /**
      * Fires the websocket
+     * @private
      * @type {function(this:LeagueService)|*}
      */
     var fireWebsocket = function (callback) {
