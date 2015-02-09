@@ -3,23 +3,25 @@
 jest.dontMock('../LeagueTable');
 
 describe('LeagueRow', function () {
-    var LeagueTable = require('../LeagueTable');
     var React = require('react/addons');
+    var LeagueTable = require('../LeagueTable');
+    var LeagueService = require('../../services/league-service');
+
     var TestUtils = React.addons.TestUtils;
-    var leagueRow = null;
+    var leagueService = null;
 
     var leagueData;
 
     beforeEach(function () {
-        leagueRow = TestUtils.renderIntoDocument(<LeagueRow teamData={teamData} position={position} />);
+        LeagueService.initLeagueObject();
+        leagueTable = TestUtils.renderIntoDocument(<LeagueTable leagueData={LeagueService.league} />);
     });
 
     it('creates leagueRows from league object', function () {
-        var strongElement = TestUtils.scryRenderedDOMComponentsWithTag(
-            leagueRow, 'strong');
+        var leagueRows = TestUtils.scryRenderedDOMComponentsWithTag(
+            leagueTable, 'LeagueRow');
 
-        expect(strongElement[0].getDOMNode().textContent).toEqual(position);
-        expect(strongElement[1].getDOMNode().textContent).toEqual(teamData.teamName);
+        expect(leagueRows.getDOMNode().length).not.toEqual(0);
     });
 });
 
