@@ -3,19 +3,13 @@
  */
 
 var React = window.React = require('react'),
-    Timer = require("./ui/Timer"),
-//GamesWebsocket = require('./services/games-websocket'),
-//TeamsRest = require('./services/teams-rest'),
-    LeagueService = require('./services/league-service'),
-    mountNode = document.getElementById("app");
+    LeagueTable = require('./ui/LeagueTable');
+    LeagueService = require('./services/league-service');
 
-var callback = function () {
-    console.log(true);
-};
+var mountNode = document.getElementById("app");
 
-var TodoApp = React.createClass({
+var App = React.createClass({
     setLeagueState: function () {
-        console.log('league',this.props.leagueService.league);
         this.setState({
             'league': this.props.leagueService.league
         });
@@ -26,19 +20,16 @@ var TodoApp = React.createClass({
     componentDidMount: function () {
         this.props.leagueService.init(this.setLeagueState);
     },
-    componentWillReceiveProps: function (nextProps) {
-        console.log('nextProps', nextProps);
-    },
     render: function () {
         return (
             <div>
                 <h3>League</h3>
-            {this.state.league}
+                <LeagueTable leagueData={this.state.league} />
             </div>
         );
     }
 });
 
 
-React.render(<TodoApp leagueService={LeagueService} />, mountNode);
+React.render(<App leagueService={LeagueService} />, mountNode);
 

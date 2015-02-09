@@ -10,7 +10,12 @@ var $ = require('jquery');
 var TeamsService = function(){
     var url = 'http://localhost:8080/teams';
 
-    return $.get(url);
+    /**
+     * Returns all the teams
+     */
+    this.getTeams = function(){
+        return $.get(url);
+    };
 };
 
 module.exports = new TeamsService();

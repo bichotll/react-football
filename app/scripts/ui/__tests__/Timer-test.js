@@ -1,15 +1,15 @@
 /** @jsx React.DOM */
 
-jest.dontMock('../Timer');
+jest.dontMock('../LeagueRow');
 
-describe('Timer', function () {
-    var Timer = require('../Timer');
+describe('LeagueRow', function () {
+    var Timer = require('../LeagueTable');
     var React = require('react/addons');
     var TestUtils = React.addons.TestUtils;
     var timer = null;
 
     beforeEach(function () {
-        timer = TestUtils.renderIntoDocument(<Timer/>);
+        timer = TestUtils.renderIntoDocument(<LeagueTable/>);
     });
 
     it('increments seconds elapsed with each tick', function () {

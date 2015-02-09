@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('lodash');
+var _ = require('lazy.js');
 
 var GamesWebsocket = require('./games-websocket');
 var TeamsService = require('./teams-rest');
@@ -20,9 +20,9 @@ var LeagueService = function () {
      * @param callback
      */
     this.init = function (callback) {
-        TeamsService.then(function (teamsArray) {
+        TeamsService.getTeams().then(function (teamsArray) {
             teams = teamsArray;
-            initLeague();
+            initLeagueObject();
             //fire websocket
             fireWebsocket(callback);
         });
@@ -32,8 +32,8 @@ var LeagueService = function () {
      * Creates the league object
      * @type {function(this:LeagueService)|*}
      */
-    var initLeague = function () {
-        this.league = _.map(teams, function (team) {
+    var initLeagueObject = function () {
+        this.league = _(teams).map(function (team) {
             //{id: 1, name: "Blackburn"}
             return {
                 position: 0,
@@ -48,7 +48,7 @@ var LeagueService = function () {
                 goalsDifference: 0,
                 points: 0
             }
-        });
+        }).value();
     }.bind(this);
 
     /**
@@ -58,31 +58,48 @@ var LeagueService = function () {
      */
     var updateLeague = function (match) {
         //map n change team properties by team news
-        this.league = _.chain(this.league).map(function (leagueRow) {
+        this.league = _(this.league).map(function (leagueRow) {
+
             //common
-            if (leagueRow.teamId == match.homeTeamId || leagueRow.teamId == match.awayTeamId) {
+            if (leagueRow.teamId === match.homeTeamId || leagueRow.teamId === match.awayTeamId) {
+
                 ++leagueRow.played;
-                if (leagueRow.homeGoals === leagueRow.awayGoals) {
+
+                if (+match.homeGoals === +match.awayGoals) {
                     ++leagueRow.points;
+                    ++leagueRow.drawn;
+                    //goals
+                    leagueRow.goalsFor = +leagueRow.goalsFor + +match.homeGoals;
+                    leagueRow.goalsAgainst = +leagueRow.goalsAgainst + +match.awayGoals;
                 }
 
                 //home
-                if (leagueRow.teamId == match.homeTeamId) {
-                    if (leagueRow.homeGoals > leagueRow.awayGoals) {
+                if (leagueRow.teamId === match.homeTeamId) {
+                    if (match.homeGoals > match.awayGoals) {
                         ++leagueRow.won;
-                        leagueRow.goalsFor += match.homeGoals;
-                    } else if (leagueRow.homeGoals < leagueRow.awayGoals) {
+                        leagueRow.points = leagueRow.points + 3;
+                        //goals
+                        leagueRow.goalsFor = +leagueRow.goalsFor + +match.homeGoals;
+                        leagueRow.goalsAgainst = +leagueRow.goalsAgainst + +match.awayGoals;
+                    } else if (match.homeGoals < match.awayGoals) {
                         ++leagueRow.lost;
-                        leagueRow.goalsAgainst += match.awayGoals;
+                        //goals
+                        leagueRow.goalsFor = +leagueRow.goalsFor + +match.homeGoals;
+                        leagueRow.goalsAgainst = +leagueRow.goalsAgainst + +match.awayGoals;
                     }
                     //away
-                } else if (leagueRow.teamId == match.awayTeamId) {
-                    if (leagueRow.awayGoals > leagueRow.homeGoals) {
+                } else if (leagueRow.teamId === match.awayTeamId) {
+                    if (match.awayGoals > match.homeGoals) {
                         ++leagueRow.won;
-                        leagueRow.goalsFor += match.homeGoals;
-                    } else if (leagueRow.awayGoals < leagueRow.homeGoals) {
+                        leagueRow.points = leagueRow.points + 3;
+                        //goals
+                        leagueRow.goalsFor = +leagueRow.goalsFor + +match.awayGoals;
+                        leagueRow.goalsAgainst = +leagueRow.goalsAgainst + +match.homeGoals;
+                    } else if (match.awayGoals < match.homeGoals) {
                         ++leagueRow.lost;
-                        leagueRow.goalsAgainst += match.awayGoals;
+                        //goals
+                        leagueRow.goalsFor = +leagueRow.goalsFor + +match.awayGoals;
+                        leagueRow.goalsAgainst = +leagueRow.goalsAgainst + +match.homeGoals;
                     }
                 }
 
@@ -91,8 +108,11 @@ var LeagueService = function () {
             return leagueRow;
         })
             //order by...
-            .sortByAll(['points', 'goalsDifference', 'goalsFor', 'teamName'])
-            .value();
+            .sortBy(function(leagueRow){ return leagueRow.teamName }, true)
+            .sortBy(function(leagueRow){ return leagueRow.goalsFor }, true)
+            .sortBy(function(leagueRow){ return leagueRow.goalsDifference }, true)
+            .sortBy(function(leagueRow){ return leagueRow.points }, true)
+            .value()
     }.bind(this);
 
     /**
