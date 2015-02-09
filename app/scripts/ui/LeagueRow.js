@@ -1,16 +1,12 @@
 /** @jsx React.DOM */
 var React = require('react');
-var _ = require('lazy.js');
 
 var LeagueRow = React.createClass({
-    getInitialState: function() {
-        return null;
-    },
     render: function() {
         return (
             <tr>
-                <td>{this.props.position}</td>
-                <td>{this.props.teamData.teamName}</td>
+                <td><strong>{this.props.position}</strong></td>
+                <td><strong>{this.props.teamData.teamName}</strong></td>
                 <td>{this.props.teamData.played}</td>
                 <td>{this.props.teamData.won}</td>
                 <td>{this.props.teamData.drawn}</td>
@@ -18,7 +14,7 @@ var LeagueRow = React.createClass({
                 <td>{this.props.teamData.goalsFor}</td>
                 <td>{this.props.teamData.goalsAgainst}</td>
                 <td>{this.props.teamData.goalsDifference}</td>
-                <td>{this.props.teamData.points}</td>
+                <td><strong>{this.props.teamData.points}</strong></td>
             </tr>
         );
     }

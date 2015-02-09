@@ -5,13 +5,10 @@ var _ = require('lazy.js');
 var LeagueRow = require('./LeagueRow');
 
 var LeagueTable = React.createClass({
-    getInitialState: function() {
-        return null;
-    },
-    render: function() {
-        var leagueRows = function(){
+    render: function () {
+        var leagueRows = function () {
             var position = 0;
-            return _(this.props.leagueData).map(function(teamInfo){
+            return _(this.props.leagueData).map(function (teamInfo) {
                 position++;
                 return (<LeagueRow teamData={teamInfo} position={position} />);
             }).value();
@@ -19,19 +16,23 @@ var LeagueTable = React.createClass({
 
         return (
             <table className="table table-bordered" >
-                <tr>
-                    <td>Position</td>
-                    <td>Team</td>
-                    <td>Pld</td>
-                    <td>W</td>
-                    <td>D</td>
-                    <td>L</td>
-                    <td>GF</td>
-                    <td>GA</td>
-                    <td>GD</td>
-                    <td>Pts</td>
-                </tr>
+                <thead>
+                    <tr>
+                        <th>Position</th>
+                        <th>Team</th>
+                        <th>Pld</th>
+                        <th>W</th>
+                        <th>D</th>
+                        <th>L</th>
+                        <th>GF</th>
+                        <th>GA</th>
+                        <th>GD</th>
+                        <th>Pts</th>
+                    </tr>
+                </thead>
+                <tbody>
                 {leagueRows()}
+                </tbody>
             </table>
         );
     }

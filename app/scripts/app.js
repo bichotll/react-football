@@ -23,7 +23,6 @@ var App = React.createClass({
     render: function () {
         return (
             <div>
-                <h3>League</h3>
                 <LeagueTable leagueData={this.state.league} />
             </div>
         );
